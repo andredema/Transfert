@@ -1,0 +1,9 @@
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+.idea/
+*.iml
+pc-serveur/Transferts/
+pc-serveur/serveur_config.json
+__pycache__/
