@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -20,8 +23,19 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../TransfertWifi.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: TransfertWifi-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: TransfertWifi.apk
+
+      # Publie l'APK dans « Releases » : lien direct, téléchargeable depuis le téléphone
+      - name: Publier la dernière version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete derniere-version --yes --cleanup-tag || true
+          gh release create derniere-version TransfertWifi.apk \
+            --title "Transfert Wi-Fi (dernière version)" \
+            --notes "APK compilé automatiquement depuis le commit ${GITHUB_SHA::7}."
